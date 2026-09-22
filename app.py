@@ -115,9 +115,7 @@ with st.sidebar:
     
     n_clt = st.number_input("Sample Size (n) per Trial (CLT)", min_value=5, max_value=100000, value=1000, step=5)
     
-    # Updated LLN dropdown options
-    lln_options = [10, 50, 100, 500, 1000, 2500, 5000, 10000, 50000, 100000]
-    n_lln = st.selectbox("Total Samples (LLN limit)", options=lln_options, index=4) # Default to 1000
+    n_lln = st.number_input("Total Samples (LLN limit)", min_value=10, max_value=1000000, value=1000, step=10) 
     
     st.subheader("Fixed Chart Range Bounds")
     col1, col2 = st.columns(2)
@@ -145,8 +143,7 @@ def generate_samples(dist_key, size):
         return weibull_min.rvs(c=1.5, scale=1.0, size=size) - mean_weibull
     elif dist_key.startswith('student-t-'):
         df = float(dist_key.split('-')[2])
-        # Use proper formula for fractional df Student-t: Z / sqrt(V/df) where V ~ Gamma(df/2, 2)
-        # scipy.stats.t already handles fractional df natively
+        # Z / sqrt(V/df) where V ~ Gamma(df/2, 2)
         return t.rvs(df=df, size=size)
     elif dist_key.startswith('pareto-'):
         alpha = float(dist_key.split('-')[1])
@@ -211,21 +208,19 @@ if run_simulation or 'lln_data' not in st.session_state:
     st.session_state.ms_data = pd.DataFrame({'n': np.arange(1, n_lln + 1)})
     
     for p in [1, 2, 3, 4]:
-        # Force float64 to avoid UFuncTypeError during divide
+        # Force float64 to avoid UFuncTypeError during divide on discrete variables
         pow_samples = np.power(abs_samples, p).astype(np.float64) 
         running_max = np.maximum.accumulate(pow_samples)
         running_sum = np.cumsum(pow_samples)
-        # Avoid div by zero for early moments
         out_array = np.zeros_like(running_max, dtype=np.float64)
         ratio = np.divide(running_max, running_sum, out=out_array, where=running_sum!=0)
         st.session_state.ms_data[f'p={p}'] = ratio
         
-    # Pre-calculate data for Mean Excess Plot
-    # We use absolute values to test both tails equivalently
+    # Pre-calculate data for Mean Excess Plot & Zipf Plot
     Z = np.abs(lln_samples)
     Z_sorted = np.sort(Z)
     
-    # Generate thresholds K from the 50th to 98th percentile
+    # MEP Data
     k_min = np.percentile(Z_sorted, 50)
     k_max = np.percentile(Z_sorted, 98)
     
@@ -236,6 +231,24 @@ if run_simulation or 'lln_data' not in st.session_state:
         e_K.append(np.mean(excesses) if len(excesses) > 0 else np.nan)
         
     st.session_state.mep_data = pd.DataFrame({'K': K_vals, 'e(K)': e_K})
+    
+    # Zipf Plot Data (Log-Log Survival)
+    Z_nonzero = Z_sorted[Z_sorted > 0]
+    n_nonzero = len(Z_nonzero)
+    if n_nonzero > 0:
+        zipf_K = Z_nonzero
+        # Survival probability: rank / N
+        zipf_P = np.arange(n_nonzero, 0, -1) / n_nonzero
+        
+        # Subsample for rendering performance
+        if n_nonzero > 1000:
+            indices = np.linspace(0, n_nonzero - 1, 1000).astype(int)
+            zipf_K = zipf_K[indices]
+            zipf_P = zipf_P[indices]
+            
+        st.session_state.zipf_data = pd.DataFrame({'K': zipf_K, 'P(X>K)': zipf_P})
+    else:
+        st.session_state.zipf_data = pd.DataFrame({'K': [], 'P(X>K)': []})
     
     # 2. Run CLT Simulation
     num_trials = 1000
@@ -343,16 +356,37 @@ st.plotly_chart(fig_clt, use_container_width=True)
 st.markdown("<h2 class='section-header'>Empirical Fat Tail Diagnostics (Taleb's Heuristics)</h2>", unsafe_allow_html=True)
 st.markdown("<p class='chart-desc'>These charts analyze the dataset generated in the LLN simulation above to diagnose the severity of the tails. Standard models assume moments exist and extreme events dampen out. In Extremistan, these assumptions break visibly.</p>", unsafe_allow_html=True)
 
-col_left, col_right = st.columns(2)
+col_left, col_mid, col_right = st.columns(3)
 
 with col_left:
-    st.markdown("### The Maximum-to-Sum Plot (Test 4)")
-    st.markdown("<p class='chart-desc' style='font-size:0.8rem;'>If a moment mathematically exists, the single maximum observation will eventually be dwarfed by the sum of all observations (ratio drops to 0). If the ratio hovers above zero, the maximum is dominating the sum, proving the moment is infinite.</p>", unsafe_allow_html=True)
+    st.markdown("### Zipf Plot")
+    st.caption("Log-Log Survival plot of the threshold $K$ against the probability of exceeding $K$. A straight, downward-sloping line indicates a power-law (fat tail).")
+    
+    fig_zipf = px.line(st.session_state.zipf_data, x='K', y='P(X>K)')
+    fig_zipf.update_traces(line_color='#db2777', line_width=2)
+    
+    fig_zipf.update_layout(
+        xaxis_type="log",
+        yaxis_type="log",
+        xaxis_title="Threshold (K) [Log] \u2192",
+        yaxis_title="P(X > K) [Log] \u2191",
+        margin=dict(l=40, r=20, t=20, b=40),
+        height=350,
+        plot_bgcolor='white',
+        paper_bgcolor='white'
+    )
+    fig_zipf.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=False)
+    fig_zipf.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=False)
+    
+    st.plotly_chart(fig_zipf, use_container_width=True)
+
+with col_mid:
+    st.markdown("### Maximum-to-Sum Plot")
+    st.caption("If a moment mathematically exists, the single maximum observation will eventually be dwarfed by the sum of all observations (ratio drops to 0). If it hovers above zero, the moment is infinite.")
     
     fig_ms = go.Figure()
     colors = {1: '#3b82f6', 2: '#10b981', 3: '#f59e0b', 4: '#ef4444'}
     for p in [1, 2, 3, 4]:
-        # Filter for charting performance to avoid 1M data points in Plotly
         current_sr = st.session_state.get('sample_rate', 1)
         plot_df = st.session_state.ms_data[st.session_state.ms_data['n'] % current_sr == 0]
         fig_ms.add_trace(go.Scatter(
@@ -379,8 +413,8 @@ with col_left:
     st.plotly_chart(fig_ms, use_container_width=True)
 
 with col_right:
-    st.markdown("### Mean Excess Plot (Test 2)")
-    st.markdown("<p class='chart-desc' style='font-size:0.8rem;'>Plots a threshold $K$ against the expected size of a move beyond $K$. Downward slope = Thin/Gaussian. Flat = Exponential. Upward slope = Fat/Paretian (extremes accelerate).</p>", unsafe_allow_html=True)
+    st.markdown("### Mean Excess Plot")
+    st.caption("Plots a threshold $K$ against the expected size of a move beyond $K$. Downward slope = Thin/Gaussian. Flat = Exponential. Upward slope = Fat/Paretian (extremes accelerate).")
     
     fig_mep = px.line(st.session_state.mep_data, x='K', y='e(K)')
     fig_mep.update_traces(line_color='#8b5cf6', line_width=2)
