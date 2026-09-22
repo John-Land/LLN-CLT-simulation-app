@@ -85,16 +85,16 @@ pop_stats = {
     'student-t-5': {'mean': 0, 'variance': 5/3, 'skewness': 0, 'kurtosis': 6, 'median': 0, 'p1': -3.365, 'p5': -2.015, 'p10': -1.476, 'p25': -0.727, 'p75': 0.727, 'p90': 1.476, 'p95': 2.015, 'p99': 3.365},
     'student-t-4': {'mean': 0, 'variance': 2, 'skewness': 0, 'kurtosis': np.inf, 'median': 0, 'p1': -3.747, 'p5': -2.132, 'p10': -1.533, 'p25': -0.741, 'p75': 0.741, 'p90': 1.533, 'p95': 2.132, 'p99': 3.747},
     'student-t-3': {'mean': 0, 'variance': 3, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -4.541, 'p5': -2.353, 'p10': -1.638, 'p25': -0.765, 'p75': 0.765, 'p90': 1.638, 'p95': 2.353, 'p99': 4.541},
-    'student-t-2': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0},
-    'student-t-1.75': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0},
-    'student-t-1.5': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0},
-    'student-t-1.25': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0},
-    'student-t-1.16': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0},
-    'pareto-1.75': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan},
-    'pareto-1.5': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan},
-    'pareto-1.25': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan},
-    'pareto-1.16': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan},
-    'cauchy': {'mean': np.nan, 'variance': np.nan, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0}
+    'student-t-2': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -6.965, 'p5': -2.920, 'p10': -1.886, 'p25': -0.816, 'p75': 0.816, 'p90': 1.886, 'p95': 2.920, 'p99': 6.965},
+    'student-t-1.75': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -8.571, 'p5': -3.220, 'p10': -1.996, 'p25': -0.835, 'p75': 0.835, 'p90': 1.996, 'p95': 3.220, 'p99': 8.571},
+    'student-t-1.5': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -11.196, 'p5': -3.655, 'p10': -2.146, 'p25': -0.861, 'p75': 0.861, 'p90': 2.146, 'p95': 3.655, 'p99': 11.196},
+    'student-t-1.25': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -16.488, 'p5': -4.364, 'p10': -2.366, 'p25': -0.896, 'p75': 0.896, 'p90': 2.366, 'p95': 4.364, 'p99': 16.488},
+    'student-t-1.16': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -19.988, 'p5': -4.755, 'p10': -2.476, 'p25': -0.912, 'p75': 0.912, 'p90': 2.476, 'p95': 4.755, 'p99': 19.988},
+    'pareto-1.75': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': np.power(0.5, -1/1.75) - 7/3, 'p1': np.power(0.99, -1/1.75) - 7/3, 'p5': np.power(0.95, -1/1.75) - 7/3, 'p10': np.power(0.90, -1/1.75) - 7/3, 'p25': np.power(0.75, -1/1.75) - 7/3, 'p75': np.power(0.25, -1/1.75) - 7/3, 'p90': np.power(0.10, -1/1.75) - 7/3, 'p95': np.power(0.05, -1/1.75) - 7/3, 'p99': np.power(0.01, -1/1.75) - 7/3},
+    'pareto-1.5': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': np.power(0.5, -2/3) - 3, 'p1': np.power(0.99, -2/3) - 3, 'p5': np.power(0.95, -2/3) - 3, 'p10': np.power(0.90, -2/3) - 3, 'p25': np.power(0.75, -2/3) - 3, 'p75': np.power(0.25, -2/3) - 3, 'p90': np.power(0.10, -2/3) - 3, 'p95': np.power(0.05, -2/3) - 3, 'p99': np.power(0.01, -2/3) - 3},
+    'pareto-1.25': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': np.power(0.5, -1/1.25) - 5, 'p1': np.power(0.99, -1/1.25) - 5, 'p5': np.power(0.95, -1/1.25) - 5, 'p10': np.power(0.90, -1/1.25) - 5, 'p25': np.power(0.75, -1/1.25) - 5, 'p75': np.power(0.25, -1/1.25) - 5, 'p90': np.power(0.10, -1/1.25) - 5, 'p95': np.power(0.05, -1/1.25) - 5, 'p99': np.power(0.01, -1/1.25) - 5},
+    'pareto-1.16': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': np.power(0.5, -1/1.16) - 7.25, 'p1': np.power(0.99, -1/1.16) - 7.25, 'p5': np.power(0.95, -1/1.16) - 7.25, 'p10': np.power(0.90, -1/1.16) - 7.25, 'p25': np.power(0.75, -1/1.16) - 7.25, 'p75': np.power(0.25, -1/1.16) - 7.25, 'p90': np.power(0.10, -1/1.16) - 7.25, 'p95': np.power(0.05, -1/1.16) - 7.25, 'p99': np.power(0.01, -1/1.16) - 7.25},
+    'cauchy': {'mean': np.nan, 'variance': np.nan, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': np.tan(np.pi * (0.01 - 0.5)), 'p5': np.tan(np.pi * (0.05 - 0.5)), 'p10': np.tan(np.pi * (0.10 - 0.5)), 'p25': -1, 'p75': 1, 'p90': np.tan(np.pi * (0.90 - 0.5)), 'p95': np.tan(np.pi * (0.95 - 0.5)), 'p99': np.tan(np.pi * (0.99 - 0.5))}
 }
 
 # --- Sidebar Controls ---
@@ -114,7 +114,10 @@ with st.sidebar:
     )
     
     n_clt = st.number_input("Sample Size (n) per Trial (CLT)", min_value=5, max_value=100000, value=1000, step=5)
-    n_lln = st.number_input("Total Samples (LLN limit)", min_value=10, max_value=1000000, value=2500, step=10)
+    
+    # Updated LLN dropdown options
+    lln_options = [10, 50, 100, 500, 1000, 2500, 5000, 10000, 50000, 100000]
+    n_lln = st.selectbox("Total Samples (LLN limit)", options=lln_options, index=4) # Default to 1000
     
     st.subheader("Fixed Chart Range Bounds")
     col1, col2 = st.columns(2)
@@ -142,6 +145,8 @@ def generate_samples(dist_key, size):
         return weibull_min.rvs(c=1.5, scale=1.0, size=size) - mean_weibull
     elif dist_key.startswith('student-t-'):
         df = float(dist_key.split('-')[2])
+        # Use proper formula for fractional df Student-t: Z / sqrt(V/df) where V ~ Gamma(df/2, 2)
+        # scipy.stats.t already handles fractional df natively
         return t.rvs(df=df, size=size)
     elif dist_key.startswith('pareto-'):
         alpha = float(dist_key.split('-')[1])
@@ -171,6 +176,10 @@ def calculate_statistic(data, stat_key):
         return np.percentile(data, perc)
     return 0
 
+# Initialize sample rate for the session state if it doesn't exist
+if 'sample_rate' not in st.session_state:
+    st.session_state.sample_rate = 1
+
 # --- Main Logic & Simulation ---
 if run_simulation or 'lln_data' not in st.session_state:
     
@@ -186,6 +195,8 @@ if run_simulation or 'lln_data' not in st.session_state:
     elif n_lln > 1000:
         sample_rate = 10
         
+    st.session_state.sample_rate = sample_rate
+        
     for i in range(1, n_lln + 1):
         if i < 100 or i % sample_rate == 0 or i == n_lln:
             current_slice = lln_samples[:i]
@@ -200,11 +211,13 @@ if run_simulation or 'lln_data' not in st.session_state:
     st.session_state.ms_data = pd.DataFrame({'n': np.arange(1, n_lln + 1)})
     
     for p in [1, 2, 3, 4]:
-        pow_samples = np.power(abs_samples, p)
+        # Force float64 to avoid UFuncTypeError during divide
+        pow_samples = np.power(abs_samples, p).astype(np.float64) 
         running_max = np.maximum.accumulate(pow_samples)
         running_sum = np.cumsum(pow_samples)
         # Avoid div by zero for early moments
-        ratio = np.divide(running_max, running_sum, out=np.zeros_like(running_max), where=running_sum!=0)
+        out_array = np.zeros_like(running_max, dtype=np.float64)
+        ratio = np.divide(running_max, running_sum, out=out_array, where=running_sum!=0)
         st.session_state.ms_data[f'p={p}'] = ratio
         
     # Pre-calculate data for Mean Excess Plot
@@ -340,7 +353,8 @@ with col_left:
     colors = {1: '#3b82f6', 2: '#10b981', 3: '#f59e0b', 4: '#ef4444'}
     for p in [1, 2, 3, 4]:
         # Filter for charting performance to avoid 1M data points in Plotly
-        plot_df = st.session_state.ms_data[st.session_state.ms_data['n'] % sample_rate == 0]
+        current_sr = st.session_state.get('sample_rate', 1)
+        plot_df = st.session_state.ms_data[st.session_state.ms_data['n'] % current_sr == 0]
         fig_ms.add_trace(go.Scatter(
             x=plot_df['n'], 
             y=plot_df[f'p={p}'], 
