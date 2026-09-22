@@ -32,18 +32,7 @@ st.markdown("""
 st.markdown("<h1 class='main-header'>LLN & CLT Convergence Simulator</h1>", unsafe_allow_html=True)
 
 # --- Configuration & Data Dictionaries ---
-<comment-tag id="1">DISTRIBUTIONS = {
-    'normal': 'Normal (Thin Tail)',
-    'binomial-10-0.5': 'Binomial, n=10, p=0.5 (Centered) (Discrete, Thin Tail)',
-    'geometric-0.5': 'Geometric, p=0.5 (Centered) (Discrete, Thin Tail)',
-    'poisson-5': 'Poisson, λ=5 (Centered) (Discrete, Thin Tail)',
-    'exponential': 'Exponential (Centered) (Skewed, Thin Tail)',
-    'weibull-1.5': 'Weibull, k=1.5 (Centered) (Mild Skew, Thin Tail)',
-    'student-t-30': 'Student-t, df=30 (Almost Normal)',
-    'student-t-5': 'Student-t, df=5 (Mildly Fat Tail)',
-    'student-t-4': 'Student-t, df=4 (Fat Tail)',
-    'student-t-3': 'Student-t, df=3 (Fat Tail, Finite Variance)',
-    'student-t-2': 'Student-t, df=2 (Infinite Variance)',</comment-tag id="1" text="DISTRIBUTIONS = {
+DISTRIBUTIONS = {
     'normal': 'Normal (Thin Tail)',
     'binomial-10-0.5': 'Binomial, n=10, p=0.5 (Centered) (Discrete, Thin Tail)',
     'geometric-0.5': 'Geometric, p=0.5 (Centered) (Discrete, Thin Tail)',
@@ -57,7 +46,7 @@ st.markdown("<h1 class='main-header'>LLN & CLT Convergence Simulator</h1>", unsa
     'student-t-2.75': 'Student-t, df=2.75 (Fat Tail, Finite Variance)',
     'student-t-2.5': 'Student-t, df=2.5 (Fat Tail, Finite Variance)',
     'student-t-2.25': 'Student-t, df=2.25 (Fat Tail, Finite Variance)',
-    'student-t-2': 'Student-t, df=2 (Infinite Variance)'," type="suggestion">
+    'student-t-2': 'Student-t, df=2 (Infinite Variance)',
     'student-t-1.75': 'Student-t, df=1.75 (Infinite Variance)',
     'student-t-1.5': 'Student-t, df=1.5 (Infinite Variance)',
     'student-t-1.25': 'Student-t, df=1.25 (Infinite Variance)',
@@ -88,18 +77,7 @@ STATISTICS = {
 }
 
 # Population Statistics Dictionary (Hardcoded true values)
-<comment-tag id="2">pop_stats = {
-    'normal': {'mean': 0, 'variance': 1, 'skewness': 0, 'kurtosis': 0, 'median': 0, 'p1': -2.326, 'p5': -1.645, 'p10': -1.282, 'p25': -0.674, 'p75': 0.674, 'p90': 1.282, 'p95': 1.645, 'p99': 2.326},
-    'binomial-10-0.5': {'mean': 0, 'variance': 2.5, 'skewness': 0, 'kurtosis': -0.2, 'median': 0, 'p1': -4, 'p5': -3, 'p10': -2, 'p25': -1, 'p75': 1, 'p90': 2, 'p95': 3, 'p99': 4},
-    'geometric-0.5': {'mean': 0, 'variance': 2, 'skewness': 2.12, 'kurtosis': 6.5, 'median': -1, 'p1': -1, 'p5': -1, 'p10': -1, 'p25': -1, 'p75': 0, 'p90': 2, 'p95': 3, 'p99': 5},
-    'poisson-5': {'mean': 0, 'variance': 5, 'skewness': 0.447, 'kurtosis': 0.2, 'median': 0, 'p1': -5, 'p5': -4, 'p10': -3, 'p25': -2, 'p75': 1, 'p90': 3, 'p95': 4, 'p99': 6},
-    'exponential': {'mean': 0, 'variance': 1, 'skewness': 2, 'kurtosis': 6, 'median': -np.log(0.5) - 1, 'p1': -np.log(0.99) - 1, 'p5': -np.log(0.95) - 1, 'p10': -np.log(0.90) - 1, 'p25': -np.log(0.75) - 1, 'p75': -np.log(0.25) - 1, 'p90': -np.log(0.10) - 1, 'p95': -np.log(0.05) - 1, 'p99': -np.log(0.01) - 1},
-    'weibull-1.5': {'mean': 0, 'variance': 0.3757, 'skewness': 1.072, 'kurtosis': 1.39, 'median': -0.1195, 'p1': -0.856, 'p5': -0.765, 'p10': -0.680, 'p25': -0.466, 'p75': 0.339, 'p90': 0.840, 'p95': 1.176, 'p99': 1.863},
-    'student-t-30': {'mean': 0, 'variance': 30/28, 'skewness': 0, 'kurtosis': 6/26, 'median': 0, 'p1': -2.457, 'p5': -1.697, 'p10': -1.310, 'p25': -0.683, 'p75': 0.683, 'p90': 1.310, 'p95': 1.697, 'p99': 2.457},
-    'student-t-5': {'mean': 0, 'variance': 5/3, 'skewness': 0, 'kurtosis': 6, 'median': 0, 'p1': -3.365, 'p5': -2.015, 'p10': -1.476, 'p25': -0.727, 'p75': 0.727, 'p90': 1.476, 'p95': 2.015, 'p99': 3.365},
-    'student-t-4': {'mean': 0, 'variance': 2, 'skewness': 0, 'kurtosis': np.inf, 'median': 0, 'p1': -3.747, 'p5': -2.132, 'p10': -1.533, 'p25': -0.741, 'p75': 0.741, 'p90': 1.533, 'p95': 2.132, 'p99': 3.747},
-    'student-t-3': {'mean': 0, 'variance': 3, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -4.541, 'p5': -2.353, 'p10': -1.638, 'p25': -0.765, 'p75': 0.765, 'p90': 1.638, 'p95': 2.353, 'p99': 4.541},
-    'student-t-2': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -6.965, 'p5': -2.920, 'p10': -1.886, 'p25': -0.816, 'p75': 0.816, 'p90': 1.886, 'p95': 2.920, 'p99': 6.965},</comment-tag id="2" text="pop_stats = {
+pop_stats = {
     'normal': {'mean': 0, 'variance': 1, 'skewness': 0, 'kurtosis': 0, 'median': 0, 'p1': -2.326, 'p5': -1.645, 'p10': -1.282, 'p25': -0.674, 'p75': 0.674, 'p90': 1.282, 'p95': 1.645, 'p99': 2.326},
     'binomial-10-0.5': {'mean': 0, 'variance': 2.5, 'skewness': 0, 'kurtosis': -0.2, 'median': 0, 'p1': -4, 'p5': -3, 'p10': -2, 'p25': -1, 'p75': 1, 'p90': 2, 'p95': 3, 'p99': 4},
     'geometric-0.5': {'mean': 0, 'variance': 2, 'skewness': 2.12, 'kurtosis': 6.5, 'median': -1, 'p1': -1, 'p5': -1, 'p10': -1, 'p25': -1, 'p75': 0, 'p90': 2, 'p95': 3, 'p99': 5},
@@ -113,7 +91,7 @@ STATISTICS = {
     'student-t-2.75': {'mean': 0, 'variance': 11/3, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -4.939, 'p5': -2.463, 'p10': -1.693, 'p25': -0.777, 'p75': 0.777, 'p90': 1.693, 'p95': 2.463, 'p99': 4.939},
     'student-t-2.5': {'mean': 0, 'variance': 5.0, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -5.452, 'p5': -2.607, 'p10': -1.758, 'p25': -0.788, 'p75': 0.788, 'p90': 1.758, 'p95': 2.607, 'p99': 5.452},
     'student-t-2.25': {'mean': 0, 'variance': 9.0, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -6.115, 'p5': -2.784, 'p10': -1.832, 'p25': -0.801, 'p75': 0.801, 'p90': 1.832, 'p95': 2.784, 'p99': 6.115},
-    'student-t-2': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -6.965, 'p5': -2.920, 'p10': -1.886, 'p25': -0.816, 'p75': 0.816, 'p90': 1.886, 'p95': 2.920, 'p99': 6.965}," type="suggestion">
+    'student-t-2': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -6.965, 'p5': -2.920, 'p10': -1.886, 'p25': -0.816, 'p75': 0.816, 'p90': 1.886, 'p95': 2.920, 'p99': 6.965},
     'student-t-1.75': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -8.571, 'p5': -3.220, 'p10': -1.996, 'p25': -0.835, 'p75': 0.835, 'p90': 1.996, 'p95': 3.220, 'p99': 8.571},
     'student-t-1.5': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -11.196, 'p5': -3.655, 'p10': -2.146, 'p25': -0.861, 'p75': 0.861, 'p90': 2.146, 'p95': 3.655, 'p99': 11.196},
     'student-t-1.25': {'mean': 0, 'variance': np.inf, 'skewness': np.nan, 'kurtosis': np.nan, 'median': 0, 'p1': -16.488, 'p5': -4.364, 'p10': -2.366, 'p25': -0.896, 'p75': 0.896, 'p90': 2.366, 'p95': 4.364, 'p99': 16.488},
