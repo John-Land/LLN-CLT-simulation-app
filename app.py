@@ -353,14 +353,16 @@ st.plotly_chart(fig_clt, use_container_width=True)
 
 
 # --- EMPIRICAL FAT TAIL DIAGNOSTICS SECTION ---
-st.markdown("<h2 class='section-header'>Empirical Fat Tail Diagnostics (Taleb's Heuristics)</h2>", unsafe_allow_html=True)
+st.markdown("<h2 class='section-header'>Empirical Fat Tail Diagnostics</h2>", unsafe_allow_html=True)
 st.markdown("<p class='chart-desc'>These charts analyze the dataset generated in the LLN simulation above to diagnose the severity of the tails. Standard models assume moments exist and extreme events dampen out. In Extremistan, these assumptions break visibly.</p>", unsafe_allow_html=True)
 
 col_left, col_mid, col_right = st.columns(3)
 
 with col_left:
     st.markdown("### Zipf Plot")
-    st.caption("Log-Log Survival plot of the threshold $K$ against the probability of exceeding $K$. A straight, downward-sloping line indicates a power-law (fat tail).")
+    st.caption("""Diagnoses the empirical rate of tail decay by plotting the Log of a threshold $K$ (X-axis) against the Log of the probability of exceeding that threshold, $P(X > K)$ (Y-axis).
+*   **Thin Tail:** The line curves and plunges almost vertically downward, indicating that extreme outliers face a strict probabilistic boundary.
+*   **Fat Tail:** The line forms a shallow, negatively sloping diagonal, indicating extreme events decay slowly and remain highly probable.""")
     
     fig_zipf = px.line(st.session_state.zipf_data, x='K', y='P(X>K)')
     fig_zipf.update_traces(line_color='#db2777', line_width=2)
@@ -382,7 +384,9 @@ with col_left:
 
 with col_mid:
     st.markdown("### Maximum-to-Sum Plot")
-    st.caption("If a moment mathematically exists, the single maximum observation will eventually be dwarfed by the sum of all observations (ratio drops to 0). If it hovers above zero, the moment is infinite.")
+    st.caption("""Visually tests if a moment is finite by plotting sample size $n$ (X-axis) against the ratio of the single maximum observation to the sum of all observations, $\\frac{\\max(|X|^p)}{\\sum |X|^p}$ (Y-axis), for moments $p=1, 2, 3, 4$.
+*   **Thin Tail:** All moment lines smoothly drop toward 0 as sample size grows, indicating the moments are finite and stable.
+*   **Fat Tail:** The lines for higher moments (like $p=2, 3, 4$) jump erratically or hover above 0 indefinitely, indicating a single outlier dominates the dataset and the moment is mathematically infinite.""")
     
     fig_ms = go.Figure()
     colors = {1: '#3b82f6', 2: '#10b981', 3: '#f59e0b', 4: '#ef4444'}
@@ -414,7 +418,9 @@ with col_mid:
 
 with col_right:
     st.markdown("### Mean Excess Plot")
-    st.caption("Plots a threshold $K$ against the expected size of a move beyond $K$. Downward slope = Thin/Gaussian. Flat = Exponential. Upward slope = Fat/Paretian (extremes accelerate).")
+    st.caption("""Plots how severe deviations become *after* an initial threshold $K$ (X-axis) is breached, measured against the expected excess beyond $K$, $e(K) = E[|X| - K \mid |X| > K]$ (Y-axis).
+*   **Thin Tail:** The line slopes downward, indicating that once a threshold is breached, subsequent deviations are pulled aggressively back toward normal levels.
+*   **Fat Tail:** The line slopes upward, indicating an acceleration effect: once an extreme threshold is breached, the expected severity of the event continues to grow.""")
     
     fig_mep = px.line(st.session_state.mep_data, x='K', y='e(K)')
     fig_mep.update_traces(line_color='#8b5cf6', line_width=2)
