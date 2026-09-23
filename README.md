@@ -70,6 +70,18 @@ $$
 * **Finite Variance (**$\sigma^2 < \infty$**):** The core mathematical prerequisite. The variance dictates the scaling factor ($\sigma / \sqrt{n}$) in the formula.
 * **Finite Mean (**$\mu$ **exists):** Centering the data is impossible without a defined mean.
 
+**Convergence of Specific Sample Statistics:**
+
+| Statistic | Does it Converge? | Limiting Distribution / Boundary Condition | 
+| ----- | ----- | ----- | 
+| **Sample average** | Yes | Normal Distribution ($\mathcal{N}$). Requires finite variance. | 
+| **Sample median** | Yes | Normal Distribution ($\mathcal{N}$). Requires a positive density at the median. | 
+| **Sample percentiles** | Yes | Normal Distribution ($\mathcal{N}$). Governed by the Bahadur representation. | 
+| **Sample mean absolute dev.** | Yes | Normal Distribution ($\mathcal{N}$). Requires finite variance. | 
+| **Sample standard deviation** | Yes | Normal Distribution ($\mathcal{N}$). Requires a strictly finite 4th moment (kurtosis). | 
+| **Sample skewness & kurtosis**| **Conditional**| Normal Distribution ($\mathcal{N}$). Skewness requires a finite 6th moment. Kurtosis requires a finite 8th moment. These fail almost universally in real-world data. |
+| **Sample min & max** | **No** | Converges to the Generalized Extreme Value (GEV) distribution (Fréchet, Gumbel, or Weibull), never Gaussian. | 
+
 ### The Generalized Central Limit Theorem & Pre-Asymptotic Convergence
 
 When the strict requirement of finite variance is broken ($\sigma^2 = \infty$), the standard CLT collapses. If the tails decay as a power law (e.g., Pareto distribution where $\alpha < 2$), the sum of the variables is governed by the **Generalized Central Limit Theorem**, converging instead to a **Lévy Alpha-Stable Distribution** retaining infinite variance.
