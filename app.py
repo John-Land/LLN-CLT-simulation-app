@@ -25,12 +25,65 @@ st.markdown("""
         padding-top: 1rem;
         border-top: 2px solid #e2e8f0;
         color: #0f172a;
+        margin-bottom: 1rem;
+    }
+    .math-text {
+        font-size: 1.05rem;
+        line-height: 1.6;
     }
     </style>
 """, unsafe_allow_html=True)
 
 st.markdown("<h1 class='main-header'>LLN & CLT Convergence Simulator</h1>", unsafe_allow_html=True)
 
+# --- MATHEMATICAL FOUNDATIONS SECTION ---
+st.markdown("<h2 class='section-header' style='margin-top: 1rem;'>Mathematical Foundations & Core Concepts</h2>", unsafe_allow_html=True)
+
+col_lln_theory, col_clt_theory = st.columns(2)
+
+with col_lln_theory:
+    st.markdown("### The Law of Large Numbers (LLN)")
+    st.markdown("<div class='math-text'><b>Intuitive Definition:</b> If you repeatedly sample from a stable environment, the average of your observations will eventually lock onto the true mathematical average of that environment. As your sample size grows, the noise of individual random events cancels out.</div>", unsafe_allow_html=True)
+    st.markdown("<br><div class='math-text'><b>Mathematical Definition:</b> Let $X_1, X_2, \\dots, X_n$ be a sequence of random variables with a true expected value $\\mu = E[X]$. Let $\\bar{X}_n$ be the sample mean:</div>", unsafe_allow_html=True)
+    st.latex(r"\bar{X}_n = \frac{1}{n} \sum_{i=1}^n X_i")
+    st.markdown("<div class='math-text'>The Weak Law of Large Numbers states that for any margin of error $\\epsilon > 0$, the probability that the sample mean deviates from the true mean approaches zero as $n \\to \\infty$:</div>", unsafe_allow_html=True)
+    st.latex(r"\lim_{n \to \infty} P(\vert\bar{X}_n - \mu\vert \ge \epsilon) = 0")
+    
+    st.markdown("""
+    **Strict Requirements for the LLN:**
+    * **Finite First Moment ($E[|X|] < \\infty$):** The core requirement. If the mean is undefined (e.g., Cauchy distribution), the sample average will endlessly jump and never converge.
+    * **Identically Distributed & Independent:** Must come from the same probability distribution without influencing each other.
+    """)
+
+with col_clt_theory:
+    st.markdown("### The Central Limit Theorem (CLT)")
+    st.markdown("<div class='math-text'>While the LLN dictates <i>where</i> the sample mean heads, the CLT dictates the <i>shape</i> of the errors around that mean.</div>", unsafe_allow_html=True)
+    st.markdown("<br><div class='math-text'><b>Mathematical Definition:</b> Let $X_1, X_2, \\dots, X_n$ be a sequence of independent and identically distributed (i.i.d.) random variables with a true expected value $\\mu = E[X]$ and a strictly finite variance $\\sigma^2 = Var(X) < \\infty$.</div>", unsafe_allow_html=True)
+    st.markdown("<div class='math-text'>The Average of Sample Variables converges to a Normal distribution centered on the true mean:</div>", unsafe_allow_html=True)
+    st.latex(r"\bar{X}_n \sim \mathcal{N}\left(\mu, \frac{\sigma^2}{n}\right)")
+    st.markdown("<div class='math-text'>The Standardized Average ($Z_n$) converges exactly in distribution to the Standard Normal:</div>", unsafe_allow_html=True)
+    st.latex(r"Z_n = \frac{\bar{X}_n - \mu}{\sigma / \sqrt{n}} \xrightarrow{d} \mathcal{N}(0,1)")
+    
+    st.markdown("""
+    **Strict Requirements for the CLT:**
+    * **Finite Variance ($\\sigma^2 < \\infty$):** The core prerequisite. The variance dictates the scaling factor ($\\sigma / \\sqrt{n}$) in the formula.
+    * **Finite Mean ($\\mu$ exists):** Centering the data is impossible without a defined mean.
+    """)
+
+st.markdown("### Convergence of Specific Sample Statistics")
+st.markdown("""
+| Statistic | LLN Convergence | LLN Requirement | CLT Limiting Distribution | CLT Requirement |
+| :--- | :--- | :--- | :--- | :--- |
+| **Sample average** | Yes | Finite Mean | Normal ($\mathcal{N}$) | Finite Variance |
+| **Sample median** | Yes | CDF strictly increasing at median | Normal ($\mathcal{N}$) | Positive density at median |
+| **Sample percentiles** | Yes | Glivenko-Cantelli theorem | Normal ($\mathcal{N}$) | Bahadur representation |
+| **Sample standard dev.** | Yes | Finite Variance | Normal ($\mathcal{N}$) | Finite 4th moment (Kurtosis) |
+| **Sample skewness**| **Conditional**| Finite 3rd moment | **Conditional** ($\mathcal{N}$) | Finite 6th moment (Breaks fast) |
+| **Sample kurtosis**| **Conditional**| Finite 4th moment | **Conditional** ($\mathcal{N}$) | Finite 8th moment (Almost never exists) |
+| **Sample min & max** | **No** | *Extreme Value Theory (EVT) governed* | **No** (GEV Distribution) | *Extreme Value Theory (EVT) governed* |
+""")
+
+st.markdown("---")
 # --- Configuration & Data Dictionaries ---
 DISTRIBUTIONS = {
     'normal': 'Normal (Thin Tail)',
@@ -283,28 +336,8 @@ if run_simulation or 'lln_data' not in st.session_state:
     st.session_state.clt_data = pd.DataFrame({'value': clt_y})
 
 # --- Rendering Charts ---
-st.markdown("<h2>Law of Large Numbers (LLN)</h2>", unsafe_allow_html=True)
-
-with st.expander("Reference: LLN Mathematical Foundations & Requirements"):
-    st.markdown("""
-    **Intuitive Definition:** If you repeatedly sample from a stable environment, the average of your observations will eventually lock onto the true mathematical average of that environment. As your sample size grows, the noise of individual random events cancels out.
-
-    **Mathematical Definition:** Let $X_1, X_2, \dots, X_n$ be a sequence of random variables with a true expected value $\mu = E[X]$. Let $\bar{X}_n$ be the sample mean: $\bar{X}_n = \\frac{1}{n} \sum_{i=1}^n X_i$. The Weak Law states that for any margin of error $\epsilon > 0$: $\lim_{n \to \infty} P(\vert{}\bar{X}_n - \mu\vert{} \ge \epsilon) = 0$.
-
-    **Strict Requirements:**
-    * **Finite First Moment (**$E[\vert{}X\vert{}] < \infty$**):** The core requirement. If the mean is undefined (e.g., Cauchy distribution), the sample average will endlessly jump and never converge.
-    * **Identically Distributed & Independent:** Must come from the same probability distribution without influencing each other.
-
-    **Convergence of Specific Sample Statistics:**
-    | Statistic | Does it Converge? | Requirement / Boundary Condition |
-    | :--- | :--- | :--- |
-    | **Sample average** | Yes | Requires a finite mean. |
-    | **Sample median** | Yes | Requires the CDF to be strictly increasing at the median. |
-    | **Sample percentiles** | Yes | Guaranteed by the Glivenko-Cantelli theorem. |
-    | **Sample standard deviation** | Yes | Requires finite variance. |
-    | **Sample skewness & kurtosis**| **Conditional**| Higher moments require finite moments up to order $k$. They break down incredibly fast in fat-tailed environments. |
-    | **Sample min & max** | **No** | Governed by Extreme Value Theory, not the LLN. |
-    """)
+st.markdown("<h2 class='section-header'>Simulation Engine</h2>", unsafe_allow_html=True)
+st.markdown("<h3>Law of Large Numbers (LLN)</h3>", unsafe_allow_html=True)
 
 pop_val = pop_stats[selected_dist_key].get(selected_stat_key, np.nan)
 pop_label = 'Undefined / Does Not Exist'
@@ -344,29 +377,7 @@ st.plotly_chart(fig_lln, use_container_width=True)
 
 st.markdown("---")
 
-st.markdown("<h2>Central Limit Theorem (CLT)</h2>", unsafe_allow_html=True)
-
-with st.expander("Reference: CLT Mathematical Foundations & Requirements"):
-    st.markdown("""
-    While the LLN dictates *where* the sample mean heads, the CLT dictates the *shape* of the errors around that mean.
-
-    **Mathematical Definition:** Let $X_1, X_2, \dots, X_n$ be a sequence of independent and identically distributed (i.i.d.) random variables with a true expected value $\mu = E[X]$ and a strictly finite variance $\sigma^2 = Var(X) < \infty$. The Average of Sample Variables ($\bar{X}_n = \\frac{S_n}{n}$) converges to a Normal distribution centered on the true mean: $\bar{X}_n \sim \mathcal{N}\left(\mu, \\frac{\sigma^2}{n}\\right)$.
-
-    **Strict Requirements:**
-    * **Finite Variance (**$\sigma^2 < \infty$**):** The core mathematical prerequisite. The variance dictates the scaling factor ($\sigma / \sqrt{n}$) in the formula.
-    * **Finite Mean (**$\mu$ **exists):** Centering the data is impossible without a defined mean.
-
-    **Convergence of Specific Sample Statistics:**
-    | Statistic | Does it Converge? | Limiting Distribution / Boundary Condition |
-    | :--- | :--- | :--- |
-    | **Sample average** | Yes | Normal Distribution ($\mathcal{N}$). Requires finite variance. |
-    | **Sample median** | Yes | Normal Distribution ($\mathcal{N}$). Requires a positive density at the median. |
-    | **Sample percentiles** | Yes | Normal Distribution ($\mathcal{N}$). Governed by the Bahadur representation. |
-    | **Sample standard deviation** | Yes | Normal Distribution ($\mathcal{N}$). Requires a strictly finite 4th moment (kurtosis). |
-    | **Sample skewness & kurtosis**| **Conditional**| Normal Distribution ($\mathcal{N}$). Skewness requires a finite 6th moment. Kurtosis requires a finite 8th moment. These fail almost universally in real-world data. |
-    | **Sample min & max** | **No** | Converges to the Generalized Extreme Value (GEV) distribution (Fréchet, Gumbel, or Weibull), never Gaussian. |
-    """)
-
+st.markdown("<h3>Central Limit Theorem (CLT)</h3>", unsafe_allow_html=True)
 st.markdown(f"<p class='chart-desc'>Tests the assumption of finite variance by taking 1,000 independent trials of size <i>n={n_clt}</i>, and plotting the resulting <b>{STATISTICS[selected_stat_key]}</b> (X-axis) against its Frequency (Y-axis).</p>", unsafe_allow_html=True)
 
 valid_clt_data = st.session_state.clt_data[
