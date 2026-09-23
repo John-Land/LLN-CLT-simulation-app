@@ -27,15 +27,8 @@ st.markdown("""
         color: #0f172a;
         margin-bottom: 1rem;
     }
-    .math-text {
-        font-size: 1.05rem;
-        line-height: 1.6;
-    }
-    .math-caption {
-        font-size: 0.875rem; /* Matches st.caption */
-        color: #64748b;
-        line-height: 1.4;
-        margin-bottom: 0.5rem;
+    table {
+        font-size: 0.875rem !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -49,41 +42,35 @@ col_lln_theory, col_clt_theory = st.columns(2)
 
 with col_lln_theory:
     st.markdown("### The Law of Large Numbers (LLN)")
-    st.markdown("<div class='math-caption'><b>Intuitive Definition:</b> If you repeatedly sample from a stable environment, the average of your observations will eventually lock onto the true mathematical average of that environment. As your sample size grows, the noise of individual random events cancels out.</div>", unsafe_allow_html=True)
-    st.markdown("<div class='math-caption'><b>Mathematical Definition:</b> Let $X_1, X_2, \\dots, X_n$ be a sequence of random variables with a true expected value $\\mu = E[X]$. Let $\\bar{X}_n$ be the sample mean:</div>", unsafe_allow_html=True)
+    st.caption(r"**Intuitive Definition:** If you repeatedly sample from a stable environment, the average of your observations will eventually lock onto the true mathematical average of that environment. As your sample size grows, the noise of individual random events cancels out.")
+    st.caption(r"**Mathematical Definition:** Let $X_1, X_2, \dots, X_n$ be a sequence of random variables with a true expected value $\mu = E[X]$. Let $\bar{X}_n$ be the sample mean:")
     st.latex(r"\bar{X}_n = \frac{1}{n} \sum_{i=1}^n X_i")
-    st.markdown("<div class='math-caption'>The Weak Law of Large Numbers states that for any margin of error $\\epsilon > 0$, the probability that the sample mean deviates from the true mean approaches zero as $n \\to \\infty$:</div>", unsafe_allow_html=True)
+    st.caption(r"The Weak Law of Large Numbers states that for any margin of error $\epsilon > 0$, the probability that the sample mean deviates from the true mean approaches zero as $n \to \infty$:")
     st.latex(r"\lim_{n \to \infty} P(\vert\bar{X}_n - \mu\vert \ge \epsilon) = 0")
     
-    st.markdown("""
-    <div class='math-caption'>
-    <b>Strict Requirements for the LLN:</b><br>
-    • <b>Finite First Moment ($E[|X|] < \infty$):</b> The core requirement. If the mean is undefined (e.g., Cauchy distribution), the sample average will endlessly jump and never converge.<br>
-    • <b>Identically Distributed & Independent:</b> Must come from the same probability distribution without influencing each other.
-    </div>
-    """, unsafe_allow_html=True)
+    st.caption(r"""
+    **Strict Requirements for the LLN:**
+    * **Finite First Moment ($E[|X|] < \infty$):** The core requirement. If the mean is undefined (e.g., Cauchy distribution), the sample average will endlessly jump and never converge.
+    * **Identically Distributed & Independent:** Must come from the same probability distribution without influencing each other.
+    """)
 
 with col_clt_theory:
     st.markdown("### The Central Limit Theorem (CLT)")
-    st.markdown("<div class='math-caption'>While the LLN dictates <i>where</i> the sample mean heads, the CLT dictates the <i>shape</i> of the errors around that mean.</div>", unsafe_allow_html=True)
-    st.markdown("<div class='math-caption'><b>Mathematical Definition:</b> Let $X_1, X_2, \\dots, X_n$ be a sequence of independent and identically distributed (i.i.d.) random variables with a true expected value $\\mu = E[X]$ and a strictly finite variance $\\sigma^2 = Var(X) < \\infty$.</div>", unsafe_allow_html=True)
-    st.markdown("<div class='math-caption'>The Average of Sample Variables converges to a Normal distribution centered on the true mean:</div>", unsafe_allow_html=True)
+    st.caption(r"While the LLN dictates *where* the sample mean heads, the CLT dictates the *shape* of the errors around that mean.")
+    st.caption(r"**Mathematical Definition:** Let $X_1, X_2, \dots, X_n$ be a sequence of independent and identically distributed (i.i.d.) random variables with a true expected value $\mu = E[X]$ and a strictly finite variance $\sigma^2 = Var(X) < \infty$.")
+    st.caption(r"The Average of Sample Variables converges to a Normal distribution centered on the true mean:")
     st.latex(r"\bar{X}_n \sim \mathcal{N}\left(\mu, \frac{\sigma^2}{n}\right)")
-    st.markdown("<div class='math-caption'>The Standardized Average ($Z_n$) converges exactly in distribution to the Standard Normal:</div>", unsafe_allow_html=True)
+    st.caption(r"The Standardized Average ($Z_n$) converges exactly in distribution to the Standard Normal:")
     st.latex(r"Z_n = \frac{\bar{X}_n - \mu}{\sigma / \sqrt{n}} \xrightarrow{d} \mathcal{N}(0,1)")
     
-    st.markdown("""
-    <div class='math-caption'>
-    <b>Strict Requirements for the CLT:</b><br>
-    • <b>Finite Variance ($\sigma^2 < \infty$):</b> The core prerequisite. The variance dictates the scaling factor ($\sigma / \sqrt{n}$) in the formula.<br>
-    • <b>Finite Mean ($\mu$ exists):</b> Centering the data is impossible without a defined mean.
-    </div>
-    """, unsafe_allow_html=True)
+    st.caption(r"""
+    **Strict Requirements for the CLT:**
+    * **Finite Variance ($\sigma^2 < \infty$):** The core prerequisite. The variance dictates the scaling factor ($\sigma / \sqrt{n}$) in the formula.
+    * **Finite Mean ($\mu$ exists):** Centering the data is impossible without a defined mean.
+    """)
 
 st.markdown("<h3 style='margin-top: 0.5rem;'>Convergence of Specific Sample Statistics</h3>", unsafe_allow_html=True)
-st.markdown("""
-<div class='math-caption'>
-
+st.markdown(r"""
 | Statistic | LLN Convergence | LLN Requirement | CLT Limiting Distribution | CLT Requirement |
 | :--- | :--- | :--- | :--- | :--- |
 | **Sample average** | Yes | Finite Mean | Normal ($\mathcal{N}$) | Finite Variance |
@@ -93,9 +80,7 @@ st.markdown("""
 | **Sample skewness**| **Conditional**| Finite 3rd moment | **Conditional** ($\mathcal{N}$) | Finite 6th moment (Breaks fast) |
 | **Sample kurtosis**| **Conditional**| Finite 4th moment | **Conditional** ($\mathcal{N}$) | Finite 8th moment (Almost never exists) |
 | **Sample min & max** | **No** | *Extreme Value Theory (EVT) governed* | **No** (GEV Distribution) | *Extreme Value Theory (EVT) governed* |
-
-</div>
-""", unsafe_allow_html=True)
+""")
 
 # --- Configuration & Data Dictionaries ---
 DISTRIBUTIONS = {
@@ -426,6 +411,7 @@ with col_clt_chart:
     fig_clt.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
     
     st.plotly_chart(fig_clt, use_container_width=True)
+
 
 # --- EMPIRICAL FAT TAIL DIAGNOSTICS SECTION ---
 st.markdown("<h2 class='section-header'>Empirical Fat Tail Diagnostics</h2>", unsafe_allow_html=True)
