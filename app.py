@@ -285,6 +285,27 @@ if run_simulation or 'lln_data' not in st.session_state:
 # --- Rendering Charts ---
 st.markdown("<h2>Law of Large Numbers (LLN)</h2>", unsafe_allow_html=True)
 
+with st.expander("Reference: LLN Mathematical Foundations & Requirements"):
+    st.markdown("""
+    **Intuitive Definition:** If you repeatedly sample from a stable environment, the average of your observations will eventually lock onto the true mathematical average of that environment. As your sample size grows, the noise of individual random events cancels out.
+
+    **Mathematical Definition:** Let $X_1, X_2, \dots, X_n$ be a sequence of random variables with a true expected value $\mu = E[X]$. Let $\bar{X}_n$ be the sample mean: $\bar{X}_n = \\frac{1}{n} \sum_{i=1}^n X_i$. The Weak Law states that for any margin of error $\epsilon > 0$: $\lim_{n \to \infty} P(\vert{}\bar{X}_n - \mu\vert{} \ge \epsilon) = 0$.
+
+    **Strict Requirements:**
+    * **Finite First Moment (**$E[\vert{}X\vert{}] < \infty$**):** The core requirement. If the mean is undefined (e.g., Cauchy distribution), the sample average will endlessly jump and never converge.
+    * **Identically Distributed & Independent:** Must come from the same probability distribution without influencing each other.
+
+    **Convergence of Specific Sample Statistics:**
+    | Statistic | Does it Converge? | Requirement / Boundary Condition |
+    | :--- | :--- | :--- |
+    | **Sample average** | Yes | Requires a finite mean. |
+    | **Sample median** | Yes | Requires the CDF to be strictly increasing at the median. |
+    | **Sample percentiles** | Yes | Guaranteed by the Glivenko-Cantelli theorem. |
+    | **Sample standard deviation** | Yes | Requires finite variance. |
+    | **Sample skewness & kurtosis**| **Conditional**| Higher moments require finite moments up to order $k$. They break down incredibly fast in fat-tailed environments. |
+    | **Sample min & max** | **No** | Governed by Extreme Value Theory, not the LLN. |
+    """)
+
 pop_val = pop_stats[selected_dist_key].get(selected_stat_key, np.nan)
 pop_label = 'Undefined / Does Not Exist'
 
@@ -299,7 +320,7 @@ if selected_stat_key == 'max':
 if selected_stat_key == 'min':
     pop_label = 'Decreases infinitely (EVT governed)'
 
-st.markdown(f"<p class='chart-desc'>Cumulative <b>{STATISTICS[selected_stat_key]}</b> of a single path as <i>n</i> grows to {n_lln:,}. True population value: <b>{pop_label}</b>.</p>", unsafe_allow_html=True)
+st.markdown(f"<p class='chart-desc'>Tracks statistical convergence by plotting the Sample Size <i>n</i> (X-axis) against the running, cumulative <b>{STATISTICS[selected_stat_key]}</b> (Y-axis). True population value: <b>{pop_label}</b>.</p>", unsafe_allow_html=True)
 
 fig_lln = px.line(st.session_state.lln_data, x='n', y='value')
 fig_lln.update_traces(line_color='#2563eb', line_width=1.5)
@@ -324,7 +345,29 @@ st.plotly_chart(fig_lln, use_container_width=True)
 st.markdown("---")
 
 st.markdown("<h2>Central Limit Theorem (CLT)</h2>", unsafe_allow_html=True)
-st.markdown(f"<p class='chart-desc'>Distribution of the sample <b>{STATISTICS[selected_stat_key]}</b> across 1,000 independent trials, where each trial has <i>n={n_clt}</i>.</p>", unsafe_allow_html=True)
+
+with st.expander("Reference: CLT Mathematical Foundations & Requirements"):
+    st.markdown("""
+    While the LLN dictates *where* the sample mean heads, the CLT dictates the *shape* of the errors around that mean.
+
+    **Mathematical Definition:** Let $X_1, X_2, \dots, X_n$ be a sequence of independent and identically distributed (i.i.d.) random variables with a true expected value $\mu = E[X]$ and a strictly finite variance $\sigma^2 = Var(X) < \infty$. The Average of Sample Variables ($\bar{X}_n = \\frac{S_n}{n}$) converges to a Normal distribution centered on the true mean: $\bar{X}_n \sim \mathcal{N}\left(\mu, \\frac{\sigma^2}{n}\\right)$.
+
+    **Strict Requirements:**
+    * **Finite Variance (**$\sigma^2 < \infty$**):** The core mathematical prerequisite. The variance dictates the scaling factor ($\sigma / \sqrt{n}$) in the formula.
+    * **Finite Mean (**$\mu$ **exists):** Centering the data is impossible without a defined mean.
+
+    **Convergence of Specific Sample Statistics:**
+    | Statistic | Does it Converge? | Limiting Distribution / Boundary Condition |
+    | :--- | :--- | :--- |
+    | **Sample average** | Yes | Normal Distribution ($\mathcal{N}$). Requires finite variance. |
+    | **Sample median** | Yes | Normal Distribution ($\mathcal{N}$). Requires a positive density at the median. |
+    | **Sample percentiles** | Yes | Normal Distribution ($\mathcal{N}$). Governed by the Bahadur representation. |
+    | **Sample standard deviation** | Yes | Normal Distribution ($\mathcal{N}$). Requires a strictly finite 4th moment (kurtosis). |
+    | **Sample skewness & kurtosis**| **Conditional**| Normal Distribution ($\mathcal{N}$). Skewness requires a finite 6th moment. Kurtosis requires a finite 8th moment. These fail almost universally in real-world data. |
+    | **Sample min & max** | **No** | Converges to the Generalized Extreme Value (GEV) distribution (Fréchet, Gumbel, or Weibull), never Gaussian. |
+    """)
+
+st.markdown(f"<p class='chart-desc'>Tests the assumption of finite variance by taking 1,000 independent trials of size <i>n={n_clt}</i>, and plotting the resulting <b>{STATISTICS[selected_stat_key]}</b> (X-axis) against its Frequency (Y-axis).</p>", unsafe_allow_html=True)
 
 valid_clt_data = st.session_state.clt_data[
     (st.session_state.clt_data['value'] >= y_min) & 
