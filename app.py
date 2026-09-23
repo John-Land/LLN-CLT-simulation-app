@@ -31,47 +31,59 @@ st.markdown("""
         font-size: 1.05rem;
         line-height: 1.6;
     }
+    .math-caption {
+        font-size: 0.875rem; /* Matches st.caption */
+        color: #64748b;
+        line-height: 1.4;
+        margin-bottom: 0.5rem;
+    }
     </style>
 """, unsafe_allow_html=True)
 
 st.markdown("<h1 class='main-header'>LLN & CLT Convergence Simulator</h1>", unsafe_allow_html=True)
 
 # --- MATHEMATICAL FOUNDATIONS SECTION ---
-st.markdown("<h2 class='section-header' style='margin-top: 1rem;'>Mathematical Foundations & Core Concepts</h2>", unsafe_allow_html=True)
+st.markdown("<h2 class='section-header' style='margin-top: 1rem; margin-bottom: 0.5rem;'>Mathematical Foundations & Core Concepts</h2>", unsafe_allow_html=True)
 
 col_lln_theory, col_clt_theory = st.columns(2)
 
 with col_lln_theory:
     st.markdown("### The Law of Large Numbers (LLN)")
-    st.markdown("<div class='math-text'><b>Intuitive Definition:</b> If you repeatedly sample from a stable environment, the average of your observations will eventually lock onto the true mathematical average of that environment. As your sample size grows, the noise of individual random events cancels out.</div>", unsafe_allow_html=True)
-    st.markdown("<br><div class='math-text'><b>Mathematical Definition:</b> Let $X_1, X_2, \\dots, X_n$ be a sequence of random variables with a true expected value $\\mu = E[X]$. Let $\\bar{X}_n$ be the sample mean:</div>", unsafe_allow_html=True)
+    st.markdown("<div class='math-caption'><b>Intuitive Definition:</b> If you repeatedly sample from a stable environment, the average of your observations will eventually lock onto the true mathematical average of that environment. As your sample size grows, the noise of individual random events cancels out.</div>", unsafe_allow_html=True)
+    st.markdown("<div class='math-caption'><b>Mathematical Definition:</b> Let $X_1, X_2, \\dots, X_n$ be a sequence of random variables with a true expected value $\\mu = E[X]$. Let $\\bar{X}_n$ be the sample mean:</div>", unsafe_allow_html=True)
     st.latex(r"\bar{X}_n = \frac{1}{n} \sum_{i=1}^n X_i")
-    st.markdown("<div class='math-text'>The Weak Law of Large Numbers states that for any margin of error $\\epsilon > 0$, the probability that the sample mean deviates from the true mean approaches zero as $n \\to \\infty$:</div>", unsafe_allow_html=True)
+    st.markdown("<div class='math-caption'>The Weak Law of Large Numbers states that for any margin of error $\\epsilon > 0$, the probability that the sample mean deviates from the true mean approaches zero as $n \\to \\infty$:</div>", unsafe_allow_html=True)
     st.latex(r"\lim_{n \to \infty} P(\vert\bar{X}_n - \mu\vert \ge \epsilon) = 0")
     
     st.markdown("""
-    **Strict Requirements for the LLN:**
-    * **Finite First Moment ($E[|X|] < \\infty$):** The core requirement. If the mean is undefined (e.g., Cauchy distribution), the sample average will endlessly jump and never converge.
-    * **Identically Distributed & Independent:** Must come from the same probability distribution without influencing each other.
-    """)
+    <div class='math-caption'>
+    <b>Strict Requirements for the LLN:</b><br>
+    • <b>Finite First Moment ($E[|X|] < \infty$):</b> The core requirement. If the mean is undefined (e.g., Cauchy distribution), the sample average will endlessly jump and never converge.<br>
+    • <b>Identically Distributed & Independent:</b> Must come from the same probability distribution without influencing each other.
+    </div>
+    """, unsafe_allow_html=True)
 
 with col_clt_theory:
     st.markdown("### The Central Limit Theorem (CLT)")
-    st.markdown("<div class='math-text'>While the LLN dictates <i>where</i> the sample mean heads, the CLT dictates the <i>shape</i> of the errors around that mean.</div>", unsafe_allow_html=True)
-    st.markdown("<br><div class='math-text'><b>Mathematical Definition:</b> Let $X_1, X_2, \\dots, X_n$ be a sequence of independent and identically distributed (i.i.d.) random variables with a true expected value $\\mu = E[X]$ and a strictly finite variance $\\sigma^2 = Var(X) < \\infty$.</div>", unsafe_allow_html=True)
-    st.markdown("<div class='math-text'>The Average of Sample Variables converges to a Normal distribution centered on the true mean:</div>", unsafe_allow_html=True)
+    st.markdown("<div class='math-caption'>While the LLN dictates <i>where</i> the sample mean heads, the CLT dictates the <i>shape</i> of the errors around that mean.</div>", unsafe_allow_html=True)
+    st.markdown("<div class='math-caption'><b>Mathematical Definition:</b> Let $X_1, X_2, \\dots, X_n$ be a sequence of independent and identically distributed (i.i.d.) random variables with a true expected value $\\mu = E[X]$ and a strictly finite variance $\\sigma^2 = Var(X) < \\infty$.</div>", unsafe_allow_html=True)
+    st.markdown("<div class='math-caption'>The Average of Sample Variables converges to a Normal distribution centered on the true mean:</div>", unsafe_allow_html=True)
     st.latex(r"\bar{X}_n \sim \mathcal{N}\left(\mu, \frac{\sigma^2}{n}\right)")
-    st.markdown("<div class='math-text'>The Standardized Average ($Z_n$) converges exactly in distribution to the Standard Normal:</div>", unsafe_allow_html=True)
+    st.markdown("<div class='math-caption'>The Standardized Average ($Z_n$) converges exactly in distribution to the Standard Normal:</div>", unsafe_allow_html=True)
     st.latex(r"Z_n = \frac{\bar{X}_n - \mu}{\sigma / \sqrt{n}} \xrightarrow{d} \mathcal{N}(0,1)")
     
     st.markdown("""
-    **Strict Requirements for the CLT:**
-    * **Finite Variance ($\\sigma^2 < \\infty$):** The core prerequisite. The variance dictates the scaling factor ($\\sigma / \\sqrt{n}$) in the formula.
-    * **Finite Mean ($\\mu$ exists):** Centering the data is impossible without a defined mean.
-    """)
+    <div class='math-caption'>
+    <b>Strict Requirements for the CLT:</b><br>
+    • <b>Finite Variance ($\sigma^2 < \infty$):</b> The core prerequisite. The variance dictates the scaling factor ($\sigma / \sqrt{n}$) in the formula.<br>
+    • <b>Finite Mean ($\mu$ exists):</b> Centering the data is impossible without a defined mean.
+    </div>
+    """, unsafe_allow_html=True)
 
-st.markdown("### Convergence of Specific Sample Statistics")
+st.markdown("<h3 style='margin-top: 0.5rem;'>Convergence of Specific Sample Statistics</h3>", unsafe_allow_html=True)
 st.markdown("""
+<div class='math-caption'>
+
 | Statistic | LLN Convergence | LLN Requirement | CLT Limiting Distribution | CLT Requirement |
 | :--- | :--- | :--- | :--- | :--- |
 | **Sample average** | Yes | Finite Mean | Normal ($\mathcal{N}$) | Finite Variance |
@@ -81,9 +93,10 @@ st.markdown("""
 | **Sample skewness**| **Conditional**| Finite 3rd moment | **Conditional** ($\mathcal{N}$) | Finite 6th moment (Breaks fast) |
 | **Sample kurtosis**| **Conditional**| Finite 4th moment | **Conditional** ($\mathcal{N}$) | Finite 8th moment (Almost never exists) |
 | **Sample min & max** | **No** | *Extreme Value Theory (EVT) governed* | **No** (GEV Distribution) | *Extreme Value Theory (EVT) governed* |
-""")
 
-st.markdown("---")
+</div>
+""", unsafe_allow_html=True)
+
 # --- Configuration & Data Dictionaries ---
 DISTRIBUTIONS = {
     'normal': 'Normal (Thin Tail)',
@@ -336,81 +349,83 @@ if run_simulation or 'lln_data' not in st.session_state:
     st.session_state.clt_data = pd.DataFrame({'value': clt_y})
 
 # --- Rendering Charts ---
-st.markdown("<h2 class='section-header'>Simulation Engine</h2>", unsafe_allow_html=True)
-st.markdown("<h3>Law of Large Numbers (LLN)</h3>", unsafe_allow_html=True)
+st.markdown("<h2 class='section-header' style='margin-top: 1rem;'>Simulation Engine</h2>", unsafe_allow_html=True)
 
-pop_val = pop_stats[selected_dist_key].get(selected_stat_key, np.nan)
-pop_label = 'Undefined / Does Not Exist'
+col_lln_chart, col_clt_chart = st.columns(2)
 
-if pd.notna(pop_val):
-    if np.isinf(pop_val):
-        pop_label = 'Infinity'
-    else:
-        pop_label = str(int(pop_val)) if float(pop_val).is_integer() else f"{pop_val:.3f}"
+with col_lln_chart:
+    st.markdown("<h3>Law of Large Numbers (LLN)</h3>", unsafe_allow_html=True)
+    
+    pop_val = pop_stats[selected_dist_key].get(selected_stat_key, np.nan)
+    pop_label = 'Undefined / Does Not Exist'
+    
+    if pd.notna(pop_val):
+        if np.isinf(pop_val):
+            pop_label = 'Infinity'
+        else:
+            pop_label = str(int(pop_val)) if float(pop_val).is_integer() else f"{pop_val:.3f}"
+    
+    if selected_stat_key == 'max':
+        pop_label = 'Grows infinitely (EVT governed)'
+    if selected_stat_key == 'min':
+        pop_label = 'Decreases infinitely (EVT governed)'
+    
+    st.markdown(f"<p class='chart-desc'>Tracks statistical convergence by plotting the Sample Size <i>n</i> (X-axis) against the running, cumulative <b>{STATISTICS[selected_stat_key]}</b> (Y-axis). True population value: <b>{pop_label}</b>.</p>", unsafe_allow_html=True)
+    
+    fig_lln = px.line(st.session_state.lln_data, x='n', y='value')
+    fig_lln.update_traces(line_color='#2563eb', line_width=1.5)
+    
+    if pd.notna(pop_val) and not np.isinf(pop_val) and selected_stat_key not in ['max', 'min']:
+        fig_lln.add_hline(y=pop_val, line_dash="dash", line_color="#ef4444", line_width=2)
+    
+    fig_lln.update_layout(
+        xaxis_title="Sample Size (n) \u2192",
+        yaxis_title=f"Cumulative Sample {STATISTICS[selected_stat_key]} \u2191",
+        yaxis=dict(range=[y_min, y_max], constrain='domain'),
+        margin=dict(l=40, r=20, t=20, b=40),
+        height=400,
+        plot_bgcolor='white',
+        paper_bgcolor='white'
+    )
+    fig_lln.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
+    fig_lln.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
+    
+    st.plotly_chart(fig_lln, use_container_width=True)
 
-if selected_stat_key == 'max':
-    pop_label = 'Grows infinitely (EVT governed)'
-if selected_stat_key == 'min':
-    pop_label = 'Decreases infinitely (EVT governed)'
-
-st.markdown(f"<p class='chart-desc'>Tracks statistical convergence by plotting the Sample Size <i>n</i> (X-axis) against the running, cumulative <b>{STATISTICS[selected_stat_key]}</b> (Y-axis). True population value: <b>{pop_label}</b>.</p>", unsafe_allow_html=True)
-
-fig_lln = px.line(st.session_state.lln_data, x='n', y='value')
-fig_lln.update_traces(line_color='#2563eb', line_width=1.5)
-
-if pd.notna(pop_val) and not np.isinf(pop_val) and selected_stat_key not in ['max', 'min']:
-    fig_lln.add_hline(y=pop_val, line_dash="dash", line_color="#ef4444", line_width=2)
-
-fig_lln.update_layout(
-    xaxis_title="Sample Size (n) \u2192",
-    yaxis_title=f"Cumulative Sample {STATISTICS[selected_stat_key]} \u2191",
-    yaxis=dict(range=[y_min, y_max], constrain='domain'),
-    margin=dict(l=40, r=20, t=20, b=40),
-    height=400,
-    plot_bgcolor='white',
-    paper_bgcolor='white'
-)
-fig_lln.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
-fig_lln.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
-
-st.plotly_chart(fig_lln, use_container_width=True)
-
-st.markdown("---")
-
-st.markdown("<h3>Central Limit Theorem (CLT)</h3>", unsafe_allow_html=True)
-st.markdown(f"<p class='chart-desc'>Tests the assumption of finite variance by taking 1,000 independent trials of size <i>n={n_clt}</i>, and plotting the resulting <b>{STATISTICS[selected_stat_key]}</b> (X-axis) against its Frequency (Y-axis).</p>", unsafe_allow_html=True)
-
-valid_clt_data = st.session_state.clt_data[
-    (st.session_state.clt_data['value'] >= y_min) & 
-    (st.session_state.clt_data['value'] <= y_max)
-]
-
-num_bins = 50
-bin_step = (y_max - y_min) / num_bins
-bins = np.arange(y_min, y_max + bin_step, bin_step)
-
-fig_clt = go.Figure()
-fig_clt.add_trace(go.Histogram(
-    x=valid_clt_data['value'],
-    xbins=dict(start=y_min, end=y_max, size=bin_step),
-    marker_color='#38bdf8'
-))
-
-fig_clt.update_layout(
-    xaxis_title=f"Sample {STATISTICS[selected_stat_key]} \u2192",
-    yaxis_title="Frequency \u2191",
-    xaxis=dict(range=[y_min, y_max]),
-    bargap=0.05,
-    margin=dict(l=40, r=20, t=20, b=40),
-    height=400,
-    plot_bgcolor='white',
-    paper_bgcolor='white'
-)
-fig_clt.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
-fig_clt.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
-
-st.plotly_chart(fig_clt, use_container_width=True)
-
+with col_clt_chart:
+    st.markdown("<h3>Central Limit Theorem (CLT)</h3>", unsafe_allow_html=True)
+    st.markdown(f"<p class='chart-desc'>Tests the assumption of finite variance by taking 1,000 independent trials of size <i>n={n_clt}</i>, and plotting the resulting <b>{STATISTICS[selected_stat_key]}</b> (X-axis) against its Frequency (Y-axis).</p>", unsafe_allow_html=True)
+    
+    valid_clt_data = st.session_state.clt_data[
+        (st.session_state.clt_data['value'] >= y_min) & 
+        (st.session_state.clt_data['value'] <= y_max)
+    ]
+    
+    num_bins = 50
+    bin_step = (y_max - y_min) / num_bins
+    bins = np.arange(y_min, y_max + bin_step, bin_step)
+    
+    fig_clt = go.Figure()
+    fig_clt.add_trace(go.Histogram(
+        x=valid_clt_data['value'],
+        xbins=dict(start=y_min, end=y_max, size=bin_step),
+        marker_color='#38bdf8'
+    ))
+    
+    fig_clt.update_layout(
+        xaxis_title=f"Sample {STATISTICS[selected_stat_key]} \u2192",
+        yaxis_title="Frequency \u2191",
+        xaxis=dict(range=[y_min, y_max]),
+        bargap=0.05,
+        margin=dict(l=40, r=20, t=20, b=40),
+        height=400,
+        plot_bgcolor='white',
+        paper_bgcolor='white'
+    )
+    fig_clt.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
+    fig_clt.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
+    
+    st.plotly_chart(fig_clt, use_container_width=True)
 
 # --- EMPIRICAL FAT TAIL DIAGNOSTICS SECTION ---
 st.markdown("<h2 class='section-header'>Empirical Fat Tail Diagnostics</h2>", unsafe_allow_html=True)
