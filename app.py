@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from scipy.stats import geom, poisson, expon, norm, weibull_min, t, pareto, cauchy, skew, kurtosis, bernoulli
+from scipy.stats import binom, geom, poisson, expon, norm, weibull_min, t, pareto, cauchy, skew, kurtosis
 
 # --- Streamlit Page Configuration ---
 st.set_page_config(page_title="LLN & CLT Convergence Simulator", layout="wide")
@@ -94,7 +94,7 @@ with st.expander("Mathematical Foundations & Core Concepts", expanded=True):
 # --- Configuration & Data Dictionaries ---
 DISTRIBUTIONS = {
     'normal': 'Normal (Thin Tail)',
-    'bernoulli-0.5': 'Bernoulli, p=0.5 (Centered) (Discrete, Thin Tail)',
+    'binomial-10-0.5': 'Binomial, n=10, p=0.5 (Centered) (Discrete, Thin Tail)',
     'geometric-0.5': 'Geometric, p=0.5 (Centered) (Discrete, Thin Tail)',
     'poisson-5': 'Poisson, λ=5 (Centered) (Discrete, Thin Tail)',
     'exponential': 'Exponential (Centered) (Skewed, Thin Tail)',
@@ -139,7 +139,7 @@ STATISTICS = {
 # Population Statistics Dictionary (Hardcoded true values)
 pop_stats = {
     'normal': {'mean': 0, 'variance': 1, 'skewness': 0, 'kurtosis': 0, 'median': 0, 'p1': -2.326, 'p5': -1.645, 'p10': -1.282, 'p25': -0.674, 'p75': 0.674, 'p90': 1.282, 'p95': 1.645, 'p99': 2.326},
-    'bernoulli-0.5': {'mean': 0, 'variance': 0.25, 'skewness': 0, 'kurtosis': -2.0, 'median': 0.0, 'p1': -0.5, 'p5': -0.5, 'p10': -0.5, 'p25': -0.5, 'p75': 0.5, 'p90': 0.5, 'p95': 0.5, 'p99': 0.5},
+    'binomial-10-0.5': {'mean': 0, 'variance': 2.5, 'skewness': 0, 'kurtosis': -0.2, 'median': 0, 'p1': -4, 'p5': -3, 'p10': -2, 'p25': -1, 'p75': 1, 'p90': 2, 'p95': 3, 'p99': 4},
     'geometric-0.5': {'mean': 0, 'variance': 2, 'skewness': 2.12, 'kurtosis': 6.5, 'median': -1, 'p1': -1, 'p5': -1, 'p10': -1, 'p25': -1, 'p75': 0, 'p90': 2, 'p95': 3, 'p99': 5},
     'poisson-5': {'mean': 0, 'variance': 5, 'skewness': 0.447, 'kurtosis': 0.2, 'median': 0, 'p1': -5, 'p5': -4, 'p10': -3, 'p25': -2, 'p75': 1, 'p90': 3, 'p95': 4, 'p99': 6},
     'exponential': {'mean': 0, 'variance': 1, 'skewness': 2, 'kurtosis': 6, 'median': -np.log(0.5) - 1, 'p1': -np.log(0.99) - 1, 'p5': -np.log(0.95) - 1, 'p10': -np.log(0.90) - 1, 'p25': -np.log(0.75) - 1, 'p75': -np.log(0.25) - 1, 'p90': -np.log(0.10) - 1, 'p95': -np.log(0.05) - 1, 'p99': -np.log(0.01) - 1},
@@ -196,8 +196,8 @@ with st.sidebar:
 def generate_samples(dist_key, size):
     if dist_key == 'normal':
         return norm.rvs(size=size)
-    elif dist_key == 'bernoulli-0.5':
-        return bernoulli.rvs(p=0.5, size=size) - 0.5
+    elif dist_key == 'binomial-10-0.5':
+        return binom.rvs(n=10, p=0.5, size=size) - 5
     elif dist_key == 'geometric-0.5':
         return geom.rvs(p=0.5, size=size) - 2 
     elif dist_key == 'poisson-5':
@@ -345,81 +345,77 @@ if run_simulation or 'lln_data' not in st.session_state:
 # --- Rendering Charts ---
 st.markdown("<h2 class='section-header' style='margin-top: 1rem;'>Simulation Engine</h2>", unsafe_allow_html=True)
 
-col_lln_chart, col_clt_chart = st.columns(2)
+st.markdown("<h3>Law of Large Numbers (LLN)</h3>", unsafe_allow_html=True)
 
-with col_lln_chart:
-    st.markdown("<h3>Law of Large Numbers (LLN)</h3>", unsafe_allow_html=True)
-    
-    pop_val = pop_stats[selected_dist_key].get(selected_stat_key, np.nan)
-    pop_label = 'Undefined / Does Not Exist'
-    
-    if pd.notna(pop_val):
-        if np.isinf(pop_val):
-            pop_label = 'Infinity'
-        else:
-            pop_label = str(int(pop_val)) if float(pop_val).is_integer() else f"{pop_val:.3f}"
-    
-    if selected_stat_key == 'max':
-        pop_label = 'Grows infinitely (EVT governed)'
-    if selected_stat_key == 'min':
-        pop_label = 'Decreases infinitely (EVT governed)'
-    
-    st.markdown(f"<p class='chart-desc'>Tracks statistical convergence by plotting the Sample Size <i>n</i> (X-axis) against the running, cumulative <b>{STATISTICS[selected_stat_key]}</b> (Y-axis). True population value: <b>{pop_label}</b>.</p>", unsafe_allow_html=True)
-    
-    fig_lln = px.line(st.session_state.lln_data, x='n', y='value')
-    fig_lln.update_traces(line_color='#2563eb', line_width=1.5)
-    
-    if pd.notna(pop_val) and not np.isinf(pop_val) and selected_stat_key not in ['max', 'min']:
-        fig_lln.add_hline(y=pop_val, line_dash="dash", line_color="#ef4444", line_width=2)
-    
-    fig_lln.update_layout(
-        xaxis_title="Sample Size (n) \u2192",
-        yaxis_title=f"Cumulative Sample {STATISTICS[selected_stat_key]} \u2191",
-        yaxis=dict(range=[y_min, y_max], constrain='domain'),
-        margin=dict(l=40, r=20, t=20, b=40),
-        height=400,
-        plot_bgcolor='white',
-        paper_bgcolor='white'
-    )
-    fig_lln.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
-    fig_lln.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
-    
-    st.plotly_chart(fig_lln, use_container_width=True)
+pop_val = pop_stats[selected_dist_key].get(selected_stat_key, np.nan)
+pop_label = 'Undefined / Does Not Exist'
 
-with col_clt_chart:
-    st.markdown("<h3>Central Limit Theorem (CLT)</h3>", unsafe_allow_html=True)
-    st.markdown(f"<p class='chart-desc'>Tests the assumption of finite variance by taking 1,000 independent trials of size <i>n={n_clt}</i>, and plotting the resulting <b>{STATISTICS[selected_stat_key]}</b> (X-axis) against its Frequency (Y-axis).</p>", unsafe_allow_html=True)
-    
-    valid_clt_data = st.session_state.clt_data[
-        (st.session_state.clt_data['value'] >= y_min) & 
-        (st.session_state.clt_data['value'] <= y_max)
-    ]
-    
-    num_bins = 50
-    bin_step = (y_max - y_min) / num_bins
-    bins = np.arange(y_min, y_max + bin_step, bin_step)
-    
-    fig_clt = go.Figure()
-    fig_clt.add_trace(go.Histogram(
-        x=valid_clt_data['value'],
-        xbins=dict(start=y_min, end=y_max, size=bin_step),
-        marker_color='#38bdf8'
-    ))
-    
-    fig_clt.update_layout(
-        xaxis_title=f"Sample {STATISTICS[selected_stat_key]} \u2192",
-        yaxis_title="Frequency \u2191",
-        xaxis=dict(range=[y_min, y_max]),
-        bargap=0.05,
-        margin=dict(l=40, r=20, t=20, b=40),
-        height=400,
-        plot_bgcolor='white',
-        paper_bgcolor='white'
-    )
-    fig_clt.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
-    fig_clt.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
-    
-    st.plotly_chart(fig_clt, use_container_width=True)
+if pd.notna(pop_val):
+    if np.isinf(pop_val):
+        pop_label = 'Infinity'
+    else:
+        pop_label = str(int(pop_val)) if float(pop_val).is_integer() else f"{pop_val:.3f}"
+
+if selected_stat_key == 'max':
+    pop_label = 'Grows infinitely (EVT governed)'
+if selected_stat_key == 'min':
+    pop_label = 'Decreases infinitely (EVT governed)'
+
+st.markdown(f"<p class='chart-desc'>Tracks statistical convergence by plotting the Sample Size <i>n</i> (X-axis) against the running, cumulative <b>{STATISTICS[selected_stat_key]}</b> (Y-axis). True population value: <b>{pop_label}</b>.</p>", unsafe_allow_html=True)
+
+fig_lln = px.line(st.session_state.lln_data, x='n', y='value')
+fig_lln.update_traces(line_color='#2563eb', line_width=1.5)
+
+if pd.notna(pop_val) and not np.isinf(pop_val) and selected_stat_key not in ['max', 'min']:
+    fig_lln.add_hline(y=pop_val, line_dash="dash", line_color="#ef4444", line_width=2)
+
+fig_lln.update_layout(
+    xaxis_title="Sample Size (n) \u2192",
+    yaxis_title=f"Cumulative Sample {STATISTICS[selected_stat_key]} \u2191",
+    yaxis=dict(range=[y_min, y_max], constrain='domain'),
+    margin=dict(l=40, r=20, t=20, b=40),
+    height=400,
+    plot_bgcolor='white',
+    paper_bgcolor='white'
+)
+fig_lln.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
+fig_lln.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
+
+st.plotly_chart(fig_lln, use_container_width=True)
+
+st.markdown("<h3>Central Limit Theorem (CLT)</h3>", unsafe_allow_html=True)
+st.markdown(f"<p class='chart-desc'>Tests the assumption of finite variance by taking 1,000 independent trials of size <i>n={n_clt}</i>, and plotting the resulting <b>{STATISTICS[selected_stat_key]}</b> (X-axis) against its Frequency (Y-axis).</p>", unsafe_allow_html=True)
+
+valid_clt_data = st.session_state.clt_data[
+    (st.session_state.clt_data['value'] >= y_min) & 
+    (st.session_state.clt_data['value'] <= y_max)
+]
+
+num_bins = 50
+bin_step = (y_max - y_min) / num_bins
+bins = np.arange(y_min, y_max + bin_step, bin_step)
+
+fig_clt = go.Figure()
+fig_clt.add_trace(go.Histogram(
+    x=valid_clt_data['value'],
+    xbins=dict(start=y_min, end=y_max, size=bin_step),
+    marker_color='#38bdf8'
+))
+
+fig_clt.update_layout(
+    xaxis_title=f"Sample {STATISTICS[selected_stat_key]} \u2192",
+    yaxis_title="Frequency \u2191",
+    xaxis=dict(range=[y_min, y_max]),
+    bargap=0.05,
+    margin=dict(l=40, r=20, t=20, b=40),
+    height=400,
+    plot_bgcolor='white',
+    paper_bgcolor='white'
+)
+fig_clt.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
+fig_clt.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#e2e8f0', zeroline=True, zerolinecolor='#cbd5e1')
+
+st.plotly_chart(fig_clt, use_container_width=True)
 
 # --- EMPIRICAL FAT TAIL DIAGNOSTICS SECTION ---
 st.markdown("<h2 class='section-header'>Empirical Fat Tail Diagnostics</h2>", unsafe_allow_html=True)
