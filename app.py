@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from scipy.stats import binom, geom, poisson, expon, norm, weibull_min, t, pareto, cauchy, skew, kurtosis
+from scipy.stats import binom, geom, poisson, expon, norm, weibull_min, t, pareto, cauchy, skew, kurtosis, bernoulli
 
 # --- Streamlit Page Configuration ---
 st.set_page_config(page_title="LLN & CLT Convergence Simulator", layout="wide")
@@ -94,7 +94,7 @@ with st.expander("Mathematical Foundations & Core Concepts", expanded=True):
 # --- Configuration & Data Dictionaries ---
 DISTRIBUTIONS = {
     'normal': 'Normal (Thin Tail)',
-    'binomial-10-0.5': 'Binomial, n=10, p=0.5 (Centered) (Discrete, Thin Tail)',
+    'bernoulli-0.5': 'Bernoulli, p=0.5 (Centered) (Discrete, Thin Tail)',
     'geometric-0.5': 'Geometric, p=0.5 (Centered) (Discrete, Thin Tail)',
     'poisson-5': 'Poisson, λ=5 (Centered) (Discrete, Thin Tail)',
     'exponential': 'Exponential (Centered) (Skewed, Thin Tail)',
@@ -139,7 +139,7 @@ STATISTICS = {
 # Population Statistics Dictionary (Hardcoded true values)
 pop_stats = {
     'normal': {'mean': 0, 'variance': 1, 'skewness': 0, 'kurtosis': 0, 'median': 0, 'p1': -2.326, 'p5': -1.645, 'p10': -1.282, 'p25': -0.674, 'p75': 0.674, 'p90': 1.282, 'p95': 1.645, 'p99': 2.326},
-    'binomial-10-0.5': {'mean': 0, 'variance': 2.5, 'skewness': 0, 'kurtosis': -0.2, 'median': 0, 'p1': -4, 'p5': -3, 'p10': -2, 'p25': -1, 'p75': 1, 'p90': 2, 'p95': 3, 'p99': 4},
+    'bernoulli-0.5': {'mean': 0, 'variance': 0.25, 'skewness': 0, 'kurtosis': -2.0, 'median': 0.5, 'p1': -0.5, 'p5': -0.5, 'p10': -0.5, 'p25': -0.5, 'p75': 0.5, 'p90': 0.5, 'p95': 0.5, 'p99': 0.5},
     'geometric-0.5': {'mean': 0, 'variance': 2, 'skewness': 2.12, 'kurtosis': 6.5, 'median': -1, 'p1': -1, 'p5': -1, 'p10': -1, 'p25': -1, 'p75': 0, 'p90': 2, 'p95': 3, 'p99': 5},
     'poisson-5': {'mean': 0, 'variance': 5, 'skewness': 0.447, 'kurtosis': 0.2, 'median': 0, 'p1': -5, 'p5': -4, 'p10': -3, 'p25': -2, 'p75': 1, 'p90': 3, 'p95': 4, 'p99': 6},
     'exponential': {'mean': 0, 'variance': 1, 'skewness': 2, 'kurtosis': 6, 'median': -np.log(0.5) - 1, 'p1': -np.log(0.99) - 1, 'p5': -np.log(0.95) - 1, 'p10': -np.log(0.90) - 1, 'p25': -np.log(0.75) - 1, 'p75': -np.log(0.25) - 1, 'p90': -np.log(0.10) - 1, 'p95': -np.log(0.05) - 1, 'p99': -np.log(0.01) - 1},
@@ -196,8 +196,8 @@ with st.sidebar:
 def generate_samples(dist_key, size):
     if dist_key == 'normal':
         return norm.rvs(size=size)
-    elif dist_key == 'binomial-10-0.5':
-        return binom.rvs(n=10, p=0.5, size=size) - 5
+    elif dist_key == 'bernoulli-0.5':
+        return bernoulli.rvs(p=0.5, size=size) - 0.5
     elif dist_key == 'geometric-0.5':
         return geom.rvs(p=0.5, size=size) - 2 
     elif dist_key == 'poisson-5':
