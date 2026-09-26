@@ -80,16 +80,15 @@ with st.expander("Mathematical Foundations & Core Concepts", expanded=True):
 
     st.markdown("### Convergence of Specific Sample Statistics")
     st.markdown("""
-| Statistic | Limiting Target Theorem | Target Convergence | Target Convergence Requirements | Limiting Distribution Shape Theorem | Limiting Distribution | Limiting Distribution Convergence Requirements |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Sample average** | LLN | $\\lim_{n \\to \\infty} P(\\vert\\bar{X}_n - \\mu\\vert \\ge \\epsilon) = 0$ | Finite First Moment ($E[\\vert X \\vert] < \\infty$) | CLT | $\\bar{X}_n \\sim \\mathcal{N}\\left(\\mu, \\frac{\\sigma^2}{n}\\right)$ | Finite Variance ($\\sigma^2 < \\infty$) |
-| **Sample median** | LLN | $\\lim_{n \\to \\infty} P(\\vert\\hat{m}_n - m\\vert \\ge \\epsilon) = 0$ | CDF strictly increasing at the median | CLT | $\\hat{m}_n \\sim \\mathcal{N}\\left(m, \\frac{1}{4n[f(m)]^2}\\right)$ | Positive density at the median ($f(m) > 0$) |
-| **Sample percentiles** | LLN | $\\lim_{n \\to \\infty} P(\\vert\\hat{q}_p - q_p\\vert \\ge \\epsilon) = 0$ | CDF strictly increasing at the quantile | CLT | $\\hat{q}_p \\sim \\mathcal{N}\\left(q_p, \\frac{p(1-p)}{n[f(q_p)]^2}\\right)$ | Positive density at the quantile ($f(q_p) > 0$) |
-| **Sample standard dev.** | LLN | $\\lim_{n \\to \\infty} P(\\vert S_n^2 - \\sigma^2 \\vert \\ge \\epsilon) = 0$ | Finite Second Moment ($\\sigma^2 < \infty$) | CLT | $S^2 \\sim \\mathcal{N}\\left(\\sigma^2, \\frac{\\mu_4 - \\sigma^4}{n}\\right)$ | Finite 4th Moment ($\\mu_4 < \\infty$) |
-| **Sample skewness** | LLN | $\\lim_{n \\to \\infty} P(\\vert\\hat{\\gamma}_1 - \\gamma_1\\vert \\ge \\epsilon) = 0$ | Finite 3rd Moment ($E[\\vert X-\\mu \\vert^3] < \\infty$) | CLT | $\\hat{\\gamma}_1 \\sim \\mathcal{N}\\left(\\gamma_1, \\frac{V_{\\text{skew}}}{n}\\right)$ | Finite 6th Moment ($\\mu_6 < \\infty$) |
-| **Sample kurtosis** | LLN | $\\lim_{n \\to \\infty} P(\\vert\\hat{\\kappa}_n - \\kappa\\vert \\ge \\epsilon) = 0$ | Finite 4th Moment ($E[\\vert X-\\mu \\vert^4] < \\infty$) | CLT | $\\hat{\\kappa} \\sim \\mathcal{N}\\left(\\kappa, \\frac{V_{\\text{kurt}}}{n}\\right)$ | Finite 8th Moment ($\\mu_8 < \\infty$) |
-| **Sample minimum** | Endpoint Convergence | $\\lim_{n \\to \\infty} P(\\vert m_n - x_\\ast \\vert \\ge \\epsilon) = 0$ | Bounded Support or Unbounded Left Tail Boundary ($x_\\ast = \\inf\\{x: F(x)>0\\}$) | Fisher-Tippett-Gnedenko Theorem (EVT) | $m_n \\sim \\text{GEV}_{\\text{min}}(\\mu_{n,\\text{min}}, \\sigma_{n,\\text{min}}, \\xi_{\\text{min}})$ | i.i.d. & Minimum Domain of Attraction (MDA) |
-| **Sample maximum** | Endpoint Convergence | $\\lim_{n \\to \\infty} P(\\vert M_n - x^\\ast \\vert \\ge \\epsilon) = 0$ | Bounded Support or Unbounded Right Tail Boundary ($x^\\ast = \\sup\\{x: F(x)<1\\}$) | Fisher-Tippett-Gnedenko Theorem (EVT) | $M_n \\sim \\text{GEV}(\\mu_n, \\sigma_n, \\xi)$ | i.i.d. & Maximum Domain of Attraction (MDA) |
+| Statistic | LLN Convergence | LLN Requirement | CLT Limiting Distribution | CLT Requirement |
+| :--- | :--- | :--- | :--- | :--- |
+| **Sample average** | Yes | Finite Mean | Normal ($\mathcal{N}$) | Finite Variance |
+| **Sample median** | Yes | CDF strictly increasing at median | Normal ($\mathcal{N}$) | Positive density at median |
+| **Sample percentiles** | Yes | Glivenko-Cantelli theorem | Normal ($\mathcal{N}$) | Bahadur representation |
+| **Sample standard dev.** | Yes | Finite Variance | Normal ($\mathcal{N}$) | Finite 4th moment (Kurtosis) |
+| **Sample skewness**| **Conditional**| Finite 3rd moment | **Conditional** ($\mathcal{N}$) | Finite 6th moment (Breaks fast) |
+| **Sample kurtosis**| **Conditional**| Finite 4th moment | **Conditional** ($\mathcal{N}$) | Finite 8th moment (Almost never exists) |
+| **Sample min & max** | **No** | *Extreme Value Theory (EVT)* | **No** (GEV Distribution) | *Extreme Value Theory (EVT)* |
     """)
 
 # --- Configuration & Data Dictionaries ---
@@ -97,7 +96,7 @@ DISTRIBUTIONS = {
     'normal': 'Normal (Thin Tail)',
     'bernoulli-0.5': 'Bernoulli, p=0.5 (Centered) (Discrete, Thin Tail)',
     'geometric-0.5': 'Geometric, p=0.5 (Centered) (Discrete, Thin Tail)',
-    'poisson-5': 'Poisson, \u03bb=5 (Centered) (Discrete, Thin Tail)',
+    'poisson-5': 'Poisson, λ=5 (Centered) (Discrete, Thin Tail)',
     'exponential': 'Exponential (Centered) (Skewed, Thin Tail)',
     'weibull-1.5': 'Weibull, k=1.5 (Centered) (Mild Skew, Thin Tail)',
     'student-t-30': 'Student-t, df=30 (Almost Normal)',
@@ -112,10 +111,10 @@ DISTRIBUTIONS = {
     'student-t-1.5': 'Student-t, df=1.5 (Infinite Variance)',
     'student-t-1.25': 'Student-t, df=1.25 (Infinite Variance)',
     'student-t-1.16': 'Student-t, df=1.16 (Infinite Variance)',
-    'pareto-1.75': 'Pareto, \u03b1=1.75 (Centered) (Fat Tail, Inf. Var)',
-    'pareto-1.5': 'Pareto, \u03b1=1.5 (Centered) (Fat Tail, Inf. Var)',
-    'pareto-1.25': 'Pareto, \u03b1=1.25 (Centered) (Fat Tail, Inf. Var)',
-    'pareto-1.16': 'Pareto, \u03b1=1.16 (80/20 Principle) (Extreme Fat Tail)',
+    'pareto-1.75': 'Pareto, α=1.75 (Centered) (Fat Tail, Inf. Var)',
+    'pareto-1.5': 'Pareto, α=1.5 (Centered) (Fat Tail, Inf. Var)',
+    'pareto-1.25': 'Pareto, α=1.25 (Centered) (Fat Tail, Inf. Var)',
+    'pareto-1.16': 'Pareto, α=1.16 (80/20 Principle) (Extreme Fat Tail)',
     'cauchy': 'Cauchy (Unruly, Undefined Mean)'
 }
 
@@ -494,7 +493,7 @@ with col_right:
     fig_mep.update_layout(
         xaxis_title="Threshold (K) \u2192",
         yaxis_title="Expected Excess e(K) \u2191",
-        margin=dict:dict(l=40, r=20, t=20, b=40),
+        margin=dict(l=40, r=20, t=20, b=40),
         height=350,
         plot_bgcolor='white',
         paper_bgcolor='white'
